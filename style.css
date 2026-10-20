@@ -13,6 +13,21 @@ h1 {
   margin-bottom: 5px;
 }
 
+/* Navigation link styling */
+.nav-links {
+  margin-bottom: 12px;
+}
+
+.nav-links a {
+  color: #39ccd4;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.nav-links a:hover {
+  text-decoration: underline;
+}
+
 /* Hint banner styling */
 .instruction-hint {
   font-size: 0.95rem;
@@ -38,12 +53,11 @@ h1 {
   width: 80px;
   height: 60px;
   user-select: none;
-  cursor: pointer; /* Changes cursor to a hand pointer */
+  cursor: pointer;
   transition: filter 0.2s ease, transform 0.1s ease;
 }
 
-/* Visual hint when hovering over a dragon */
 .fish:hover {
   filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.8));
-  transform: scale(1.05); /* Slight magnification on hover */
+  transform: scale(1.05);
 }
