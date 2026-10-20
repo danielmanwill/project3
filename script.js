@@ -1,4 +1,3 @@
-// Array of 5 default/sample fish images
 const FISH_IMAGES = [
   'images/dragon1.jpg',
   'images/dragon2.jpg',
@@ -16,7 +15,7 @@ class Fish {
   constructor(tankElement) {
     this.tankElement = tankElement;
 
-    // Pick 1 random image from the 5 options
+    // Pick 1 random image from the 5 dragon options
     const imageIndex = Math.floor(Math.random() * FISH_IMAGES.length);
     this.imageSrc = FISH_IMAGES[imageIndex];
 
@@ -40,26 +39,22 @@ class Fish {
 
     this.updatePosition();
 
-    // Add click event listener for tapping behavior (non-cumulative speed change)
+    // Add click event listener for tapping behavior
     this.element.addEventListener('click', (event) => {
-      event.stopPropagation(); // Prevents click from registering on the tank background
+      event.stopPropagation();
       this.handleTap();
     });
 
-    // Start independent periodic check for direction changes (every 2 to 8 seconds)[cite: 3]
     this.scheduleDirectionCheck();
   }
 
-  // Set a random angle/velocity vector for straight-line movement
   setRandomDirection() {
     const angle = Math.random() * Math.PI * 2;
     this.vx = Math.cos(angle) * this.speed;
     this.vy = Math.sin(angle) * this.speed;
-
     this.updateFacingDirection();
   }
 
-  // Helper to maintain vector direction when speed changes
   rescaleVelocity() {
     const currentAngle = Math.atan2(this.vy, this.vx);
     this.vx = Math.cos(currentAngle) * this.speed;
@@ -74,23 +69,19 @@ class Fish {
     }
   }
 
-  // Handle click / tap behavior
   handleTap() {
-    // If not already modified, apply modified speed (e.g., half speed or double speed)
     if (!this.isModified) {
       this.isModified = true;
-      this.speed = 0.5; // Changes to half speed on click
+      this.speed = 0.5; // Slow down to half speed on click
     }
 
-    // Rescale velocity vector to match the new speed while keeping current direction
     this.rescaleVelocity();
 
-    // If already timed, clear existing timeout so it's not cumulative in duration (resets timer)
     if (this.timeoutId) {
       clearTimeout(this.timeoutId);
     }
 
-    // Return to normal speed after 3 seconds
+    // Return to normal speed after 3 seconds, resetting timer if clicked again
     this.timeoutId = setTimeout(() => {
       this.speed = this.normalSpeed;
       this.isModified = false;
@@ -99,9 +90,8 @@ class Fish {
     }, 3000);
   }
 
-  // Every 2-8 seconds, independently check if direction should change[cite: 3]
   scheduleDirectionCheck() {
-    const randomDelay = Math.random() * 6000 + 2000; // Between 2000ms and 8000ms
+    const randomDelay = Math.random() * 6000 + 2000;
     setTimeout(() => {
       if (Math.random() < 0.7) {
         this.setRandomDirection();
@@ -110,12 +100,10 @@ class Fish {
     }, randomDelay);
   }
 
-  // Update position every frame
   update() {
     this.x += this.vx;
     this.y += this.vy;
 
-    // Boundary constraints: Keep fish fully inside the tank[cite: 3]
     if (this.x <= 0) {
       this.x = 0;
       this.vx *= -1;
@@ -148,13 +136,12 @@ const fishList = [];
 window.addEventListener('DOMContentLoaded', () => {
   const tankElement = document.getElementById('tank');
 
-  // Generate at least 7 fish[cite: 2]
+  // Generate 7 dragons
   for (let i = 0; i < 7; i++) {
     const fish = new Fish(tankElement);
     fishList.push(fish);
   }
 
-  // Animation loop
   function animate() {
     fishList.forEach(fish => fish.update());
     requestAnimationFrame(animate);
