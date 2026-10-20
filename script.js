@@ -1,8 +1,6 @@
 // List of your dragon image paths
 const DRAGON_IMAGES = [
-  'images/dragon1.jpg',
   'images/dragon2.jpg',
-  'images/dragon3.jpg',
   'images/dragon4.jpg',
   'images/dragon5.jpg'
 ];
