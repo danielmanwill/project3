@@ -1,0 +1,65 @@
+body {
+  margin: 0;
+  padding: 20px;
+  background-color: #0b0f19;
+  color: #ffffff;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+h1 {
+  margin-bottom: 5px;
+  color: #a29bfe;
+  text-shadow: 0 0 10px rgba(162, 155, 254, 0.5);
+}
+
+.instruction-hint {
+  font-size: 0.95rem;
+  color: #00cec9;
+  margin-bottom: 15px;
+  font-style: italic;
+}
+
+/* Cosmic Sky Container */
+#sky {
+  position: relative;
+  width: 800px;
+  height: 600px;
+  border: 5px solid #a29bfe;
+  border-radius: 16px;
+  box-shadow: 0 0 30px rgba(108, 92, 231, 0.4);
+  /* Vibrant, colorful cosmic gradient */
+  background: linear-gradient(135deg, #130f40, #2c2c54, #474787);
+  overflow: hidden;
+}
+
+/* Star / Shooting star styling */
+.star-entity {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  user-select: none;
+  cursor: pointer;
+  transition: filter 0.2s ease, transform 0.2s ease;
+}
+
+.star-entity:hover {
+  filter: drop-shadow(0 0 12px #ffeaa7);
+  transform: scale(1.15);
+}
+
+.nav-link {
+  margin-top: 20px;
+}
+
+.nav-link a {
+  color: #74b9ff;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.nav-link a:hover {
+  text-decoration: underline;
+}
