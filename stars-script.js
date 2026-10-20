@@ -1,8 +1,6 @@
 // List of colorful star/cosmic icon images 
 const STAR_IMAGES = [
-  'stars1.jpg',
   'stars2.jpg',
-  'stars3.jpg',
   'stars4.jpg',
   'stars5.jpg'
 ];
