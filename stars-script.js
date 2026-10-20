@@ -4,7 +4,7 @@ const STAR_IMAGES = [
   'stars1.jpg', // Feel free to swap these with custom icons if you want!
   'stars2.jpg',
   'istars3.jpg',
-  'stars4.jpg',
+  'stars4.webp',
   'stars5.jpg'
 ];
 
