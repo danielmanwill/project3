@@ -29,13 +29,14 @@ class Fish {
     this.isModified = false;
     this.timeoutId = null;
 
-    this.setRandomDirection();
-
-    // Create DOM element
+    // Create DOM element FIRST so it exists before styling/directions are set
     this.element = document.createElement('img');
     this.element.src = this.imageSrc;
     this.element.classList.add('fish');
     this.tankElement.appendChild(this.element);
+
+    // NOW set random direction safely
+    this.setRandomDirection();
 
     this.updatePosition();
 
@@ -72,7 +73,7 @@ class Fish {
   handleTap() {
     if (!this.isModified) {
       this.isModified = true;
-      this.speed = 0.5; // Slow down to half speed on click
+      this.speed = 0.5; // Slow down on click
     }
 
     this.rescaleVelocity();
