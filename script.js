@@ -1,4 +1,5 @@
-const FISH_IMAGES = [
+// List of your dragon image paths
+const DRAGON_IMAGES = [
   'images/dragon1.jpg',
   'images/dragon2.jpg',
   'images/dragon3.jpg',
@@ -8,145 +9,105 @@ const FISH_IMAGES = [
 
 const TANK_WIDTH = 800;
 const TANK_HEIGHT = 600;
-const FISH_WIDTH = 80;
-const FISH_HEIGHT = 60;
+const DRAGON_WIDTH = 80;
+const DRAGON_HEIGHT = 60;
 
-class Fish {
+class Dragon {
   constructor(tankElement) {
     this.tankElement = tankElement;
 
-    // Pick 1 random image from the 5 dragon options
-    const imageIndex = Math.floor(Math.random() * FISH_IMAGES.length);
-    this.imageSrc = FISH_IMAGES[imageIndex];
+    // Pick a random dragon image
+    const randomImage = DRAGON_IMAGES[Math.floor(Math.random() * DRAGON_IMAGES.length)];
 
-    // Randomize initial location inside the tank
-    this.x = Math.floor(Math.random() * (TANK_WIDTH - FISH_WIDTH));
-    this.y = Math.floor(Math.random() * (TANK_HEIGHT - FISH_HEIGHT));
+    // Random starting position inside tank bounds
+    this.x = Math.random() * (TANK_WIDTH - DRAGON_WIDTH);
+    this.y = Math.random() * (TANK_HEIGHT - DRAGON_HEIGHT);
 
-    // Speed configurations
-    this.normalSpeed = 1.5;
-    this.speed = this.normalSpeed;
-    this.isModified = false;
-    this.timeoutId = null;
+    // Simple speed and direction variables
+    this.normalSpeed = 1.2;
+    this.currentSpeed = this.normalSpeed;
+    
+    // Pick random horizontal and vertical movement directions (-1 or 1)
+    this.dx = Math.random() < 0.5 ? 1 : -1;
+    this.dy = Math.random() < 0.5 ? 1 : -1;
 
-    // Create DOM element FIRST so it exists before styling/directions are set
+    // Create the image element
     this.element = document.createElement('img');
-    this.element.src = this.imageSrc;
-    this.element.classList.add('fish');
+    this.element.src = randomImage;
+    this.element.className = 'fish'; // Keeps your CSS styling
     this.tankElement.appendChild(this.element);
 
-    // NOW set random direction safely
-    this.setRandomDirection();
-
-    this.updatePosition();
-
-    // Add click event listener for tapping behavior
-    this.element.addEventListener('click', (event) => {
-      event.stopPropagation();
-      this.handleTap();
+    // Click handler to slow down for 3 seconds
+    this.element.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.currentSpeed = 0.4; // Slow speed
+      
+      // Reset speed after 3 seconds
+      setTimeout(() => {
+        this.currentSpeed = this.normalSpeed;
+      }, 3000);
     });
 
-    this.scheduleDirectionCheck();
-  }
-
-  setRandomDirection() {
-    const angle = Math.random() * Math.PI * 2;
-    this.vx = Math.cos(angle) * this.speed;
-    this.vy = Math.sin(angle) * this.speed;
-    this.updateFacingDirection();
-  }
-
-  rescaleVelocity() {
-    const currentAngle = Math.atan2(this.vy, this.vx);
-    this.vx = Math.cos(currentAngle) * this.speed;
-    this.vy = Math.sin(currentAngle) * this.speed;
-  }
-
-  updateFacingDirection() {
-    if (this.vx < 0) {
-      this.element.style.transform = 'scaleX(-1)';
-    } else {
-      this.element.style.transform = 'scaleX(1)';
-    }
-  }
-
-  handleTap() {
-    if (!this.isModified) {
-      this.isModified = true;
-      this.speed = 0.5; // Slow down on click
-    }
-
-    this.rescaleVelocity();
-
-    if (this.timeoutId) {
-      clearTimeout(this.timeoutId);
-    }
-
-    // Return to normal speed after 3 seconds, resetting timer if clicked again
-    this.timeoutId = setTimeout(() => {
-      this.speed = this.normalSpeed;
-      this.isModified = false;
-      this.timeoutId = null;
-      this.rescaleVelocity();
-    }, 3000);
-  }
-
-  scheduleDirectionCheck() {
-    const randomDelay = Math.random() * 6000 + 2000;
-    setTimeout(() => {
-      if (Math.random() < 0.7) {
-        this.setRandomDirection();
+    // Randomly change direction every few seconds
+    setInterval(() => {
+      if (Math.random() < 0.5) {
+        this.dx *= -1; // Flip horizontal direction
       }
-      this.scheduleDirectionCheck();
-    }, randomDelay);
+      if (Math.random() < 0.5) {
+        this.dy *= -1; // Flip vertical direction
+      }
+    }, 4000);
+
+    this.updatePosition();
   }
 
   update() {
-    this.x += this.vx;
-    this.y += this.vy;
+    // Move position
+    this.x += this.dx * this.currentSpeed;
+    this.y += this.dy * this.currentSpeed;
 
+    // Bounce off left/right walls
     if (this.x <= 0) {
       this.x = 0;
-      this.vx *= -1;
-      this.updateFacingDirection();
-    } else if (this.x >= TANK_WIDTH - FISH_WIDTH) {
-      this.x = TANK_WIDTH - FISH_WIDTH;
-      this.vx *= -1;
-      this.updateFacingDirection();
+      this.dx = 1;
+    } else if (this.x >= TANK_WIDTH - DRAGON_WIDTH) {
+      this.x = TANK_WIDTH - DRAGON_WIDTH;
+      this.dx = -1;
     }
 
+    // Bounce off top/bottom walls
     if (this.y <= 0) {
       this.y = 0;
-      this.vy *= -1;
-    } else if (this.y >= TANK_HEIGHT - FISH_HEIGHT) {
-      this.y = TANK_HEIGHT - FISH_HEIGHT;
-      this.vy *= -1;
+      this.dy = 1;
+    } else if (this.y >= TANK_HEIGHT - DRAGON_HEIGHT) {
+      this.y = TANK_HEIGHT - DRAGON_HEIGHT;
+      this.dy = -1;
     }
 
     this.updatePosition();
   }
 
   updatePosition() {
-    this.element.style.left = `${this.x}px`;
-    this.element.style.top = `${this.y}px`;
+    this.element.style.left = this.x + 'px';
+    this.element.style.top = this.y + 'px';
   }
 }
 
-const fishList = [];
-
+// Initialize tank and dragons when page loads
 window.addEventListener('DOMContentLoaded', () => {
-  const tankElement = document.getElementById('tank');
+  const tank = document.getElementById('tank');
+  const dragons = [];
 
-  // Generate 7 dragons
+  // Spawn 7 dragons
   for (let i = 0; i < 7; i++) {
-    const fish = new Fish(tankElement);
-    fishList.push(fish);
+    dragons.push(new Dragon(tank));
   }
 
-  function animate() {
-    fishList.forEach(fish => fish.update());
-    requestAnimationFrame(animate);
+  // Animation loop
+  function loop() {
+    dragons.forEach(dragon => dragon.update());
+    requestAnimationFrame(loop);
   }
 
-  requestAnimationFrame(animate);
+  requestAnimationFrame(loop);
 });
