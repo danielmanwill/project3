@@ -1,10 +1,10 @@
 // List of colorful star/cosmic icon images 
 const STAR_IMAGES = [
-  'stars1.jpeg',
-  'stars2.jpg',
-  'stars3.jpg',
-  'stars4.webp',
-  'stars5.jpg'
+  'images/stars1.jpg',
+  'images/stars2.jpg',
+  'images/stars3.jpg',
+  'images/stars4.jpg',
+  'images/stars5.jpg'
 ];
 
 const SKY_WIDTH = 800;
