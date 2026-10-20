@@ -1,9 +1,8 @@
 // List of colorful star/cosmic icon images 
-// (You can replace these with your own local star or planet images inside your images folder!)
 const STAR_IMAGES = [
-  'stars1.jpg', // Feel free to swap these with custom icons if you want!
+  'stars1.jpeg',
   'stars2.jpg',
-  'istars3.jpg',
+  'stars3.jpg',
   'stars4.webp',
   'stars5.jpg'
 ];
