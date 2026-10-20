@@ -1,9 +1,10 @@
+// Array of 5 default/sample fish images
 const FISH_IMAGES = [
-  'https://svgsilh.com/svg/2027299.svg',
-  'https://svgsilh.com/svg/303960.svg',
-  'https://svgsilh.com/svg/1294833.svg',
-  'https://svgsilh.com/svg/308906.svg',
-  'https://svgsilh.com/svg/310866.svg'
+  'images/dragon1.jpg',
+  'images/dragon2.jpg',
+  'images/dragon3.jpg',
+  'images/dragon4.jpg',
+  'images/dragon5.jpg'
 ];
 
 const TANK_WIDTH = 800;
@@ -23,8 +24,12 @@ class Fish {
     this.x = Math.floor(Math.random() * (TANK_WIDTH - FISH_WIDTH));
     this.y = Math.floor(Math.random() * (TANK_HEIGHT - FISH_HEIGHT));
 
-    // Base speed and velocity components for straight-line movement
-    this.speed = 1.5;
+    // Speed configurations
+    this.normalSpeed = 1.5;
+    this.speed = this.normalSpeed;
+    this.isModified = false;
+    this.timeoutId = null;
+
     this.setRandomDirection();
 
     // Create DOM element
@@ -34,6 +39,12 @@ class Fish {
     this.tankElement.appendChild(this.element);
 
     this.updatePosition();
+
+    // Add click event listener for tapping behavior (non-cumulative speed change)
+    this.element.addEventListener('click', (event) => {
+      event.stopPropagation(); // Prevents click from registering on the tank background
+      this.handleTap();
+    });
 
     // Start independent periodic check for direction changes (every 2 to 8 seconds)[cite: 3]
     this.scheduleDirectionCheck();
@@ -45,7 +56,17 @@ class Fish {
     this.vx = Math.cos(angle) * this.speed;
     this.vy = Math.sin(angle) * this.speed;
 
-    // Optional: Flip image horizontally if moving left/right
+    this.updateFacingDirection();
+  }
+
+  // Helper to maintain vector direction when speed changes
+  rescaleVelocity() {
+    const currentAngle = Math.atan2(this.vy, this.vx);
+    this.vx = Math.cos(currentAngle) * this.speed;
+    this.vy = Math.sin(currentAngle) * this.speed;
+  }
+
+  updateFacingDirection() {
     if (this.vx < 0) {
       this.element.style.transform = 'scaleX(-1)';
     } else {
@@ -53,15 +74,39 @@ class Fish {
     }
   }
 
+  // Handle click / tap behavior
+  handleTap() {
+    // If not already modified, apply modified speed (e.g., half speed or double speed)
+    if (!this.isModified) {
+      this.isModified = true;
+      this.speed = 0.5; // Changes to half speed on click
+    }
+
+    // Rescale velocity vector to match the new speed while keeping current direction
+    this.rescaleVelocity();
+
+    // If already timed, clear existing timeout so it's not cumulative in duration (resets timer)
+    if (this.timeoutId) {
+      clearTimeout(this.timeoutId);
+    }
+
+    // Return to normal speed after 3 seconds
+    this.timeoutId = setTimeout(() => {
+      this.speed = this.normalSpeed;
+      this.isModified = false;
+      this.timeoutId = null;
+      this.rescaleVelocity();
+    }, 3000);
+  }
+
   // Every 2-8 seconds, independently check if direction should change[cite: 3]
   scheduleDirectionCheck() {
     const randomDelay = Math.random() * 6000 + 2000; // Between 2000ms and 8000ms
     setTimeout(() => {
-      // 70% chance to change direction on check, or adjust as desired
       if (Math.random() < 0.7) {
         this.setRandomDirection();
       }
-      this.scheduleDirectionCheck(); // Repeat cycle
+      this.scheduleDirectionCheck();
     }, randomDelay);
   }
 
@@ -73,12 +118,12 @@ class Fish {
     // Boundary constraints: Keep fish fully inside the tank[cite: 3]
     if (this.x <= 0) {
       this.x = 0;
-      this.vx *= -1; // Reverse direction if hitting edge
-      this.element.style.transform = this.vx < 0 ? 'scaleX(-1)' : 'scaleX(1)';
+      this.vx *= -1;
+      this.updateFacingDirection();
     } else if (this.x >= TANK_WIDTH - FISH_WIDTH) {
       this.x = TANK_WIDTH - FISH_WIDTH;
       this.vx *= -1;
-      this.element.style.transform = this.vx < 0 ? 'scaleX(-1)' : 'scaleX(1)';
+      this.updateFacingDirection();
     }
 
     if (this.y <= 0) {
